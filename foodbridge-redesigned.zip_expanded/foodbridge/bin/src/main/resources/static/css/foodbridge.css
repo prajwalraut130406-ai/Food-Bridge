@@ -1,0 +1,266 @@
+/* ==========================================================================
+   FoodBridge theme — layered on top of Bootstrap 5.3
+   Palette: ink green, leaf green, turmeric, chilli on a cool pale ground.
+   ========================================================================== */
+
+:root {
+  --fb-ink: #12332c;
+  --fb-ink-2: #1c4a40;
+  --fb-leaf: #1d7a4c;
+  --fb-leaf-dark: #16603b;
+  --fb-leaf-soft: #e2f1e8;
+  --fb-turmeric: #f0a500;
+  --fb-turmeric-soft: #fdf1d0;
+  --fb-chilli: #c43a2f;
+  --fb-chilli-soft: #fae3e0;
+  --fb-sky: #1f6fa8;
+  --fb-sky-soft: #dfedf7;
+  --fb-ground: #f2f6f3;
+  --fb-surface: #ffffff;
+  --fb-line: #dde6e0;
+  --fb-muted: #5d716a;
+  --fb-radius: 14px;
+  --fb-radius-sm: 9px;
+
+  /* Bootstrap variable overrides */
+  --bs-body-font-family: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bs-body-color: var(--fb-ink);
+  --bs-body-bg: var(--fb-ground);
+  --bs-secondary-color: var(--fb-muted);
+  --bs-border-color: var(--fb-line);
+  --bs-link-color: var(--fb-leaf);
+  --bs-link-hover-color: var(--fb-leaf-dark);
+  --bs-success: var(--fb-leaf);
+  --bs-success-rgb: 29, 122, 76;
+  --bs-primary: var(--fb-sky);
+  --bs-primary-rgb: 31, 111, 168;
+  --bs-danger: var(--fb-chilli);
+  --bs-danger-rgb: 196, 58, 47;
+  --bs-border-radius: var(--fb-radius-sm);
+}
+
+body { font-size: 0.97rem; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif;
+  letter-spacing: -0.015em;
+  font-weight: 700;
+}
+.text-success { color: var(--fb-leaf) !important; }
+.text-muted, .text-body-secondary { color: var(--fb-muted) !important; }
+a { text-underline-offset: 3px; }
+
+:focus-visible { outline: 3px solid rgba(240, 165, 0, 0.7); outline-offset: 2px; }
+
+/* ---------- Buttons ---------- */
+.btn { font-weight: 600; border-radius: var(--fb-radius-sm); transition: background-color .15s, border-color .15s, color .15s; }
+.btn-success {
+  --bs-btn-bg: var(--fb-leaf); --bs-btn-border-color: var(--fb-leaf);
+  --bs-btn-hover-bg: var(--fb-leaf-dark); --bs-btn-hover-border-color: var(--fb-leaf-dark);
+  --bs-btn-active-bg: var(--fb-leaf-dark); --bs-btn-active-border-color: var(--fb-leaf-dark);
+  --bs-btn-disabled-bg: var(--fb-leaf); --bs-btn-disabled-border-color: var(--fb-leaf);
+}
+.btn-primary {
+  --bs-btn-bg: var(--fb-ink); --bs-btn-border-color: var(--fb-ink);
+  --bs-btn-hover-bg: var(--fb-ink-2); --bs-btn-hover-border-color: var(--fb-ink-2);
+  --bs-btn-active-bg: var(--fb-ink-2); --bs-btn-active-border-color: var(--fb-ink-2);
+}
+.btn-outline-success {
+  --bs-btn-color: var(--fb-leaf); --bs-btn-border-color: var(--fb-leaf);
+  --bs-btn-hover-bg: var(--fb-leaf); --bs-btn-hover-border-color: var(--fb-leaf);
+  --bs-btn-active-bg: var(--fb-leaf); --bs-btn-active-border-color: var(--fb-leaf);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--fb-ink); --bs-btn-border-color: #b7c7c0;
+  --bs-btn-hover-bg: var(--fb-ink); --bs-btn-hover-border-color: var(--fb-ink); --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: var(--fb-ink); --bs-btn-active-border-color: var(--fb-ink);
+}
+.btn-outline-danger { --bs-btn-color: var(--fb-chilli); --bs-btn-border-color: #e3b5b0; --bs-btn-hover-bg: var(--fb-chilli); --bs-btn-hover-border-color: var(--fb-chilli); }
+
+/* ---------- Navbar ---------- */
+.fb-nav { background: var(--fb-ink); padding: .7rem 0; border-bottom: 3px solid var(--fb-turmeric); }
+.fb-brand { display: inline-flex; align-items: center; gap: .6rem; color: #fff; text-decoration: none; }
+.fb-brand:hover { color: #fff; }
+.fb-brand-mark { width: 34px; height: 34px; flex: none; }
+.fb-brand-name { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; }
+.fb-role {
+  font-size: .78rem; font-weight: 600; color: var(--fb-ink); background: var(--fb-turmeric);
+  padding: .15rem .6rem; border-radius: 999px; margin-left: .15rem;
+}
+.fb-user { display: flex; align-items: center; gap: .6rem; color: rgba(255,255,255,.88); font-size: .9rem; }
+.fb-avatar {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--fb-leaf); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: .85rem;
+}
+.fb-user-name { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fb-logout { --bs-btn-color: #fff; --bs-btn-border-color: rgba(255,255,255,.35); --bs-btn-hover-bg: #fff; --bs-btn-hover-color: var(--fb-ink); --bs-btn-hover-border-color: #fff; }
+
+/* ---------- Page header ---------- */
+.page-head { margin: 0 0 1.4rem; }
+.page-head h1 { font-size: clamp(1.6rem, 2.4vw + 1rem, 2.15rem); margin: 0 0 .2rem; }
+.page-head p { margin: 0; color: var(--fb-muted); max-width: 60ch; }
+
+/* ---------- Stat tiles ---------- */
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .85rem; margin-bottom: 1.5rem; }
+.stat { background: var(--fb-surface); border: 1px solid var(--fb-line); border-radius: var(--fb-radius); padding: .9rem 1.1rem; border-left: 5px solid var(--fb-leaf); }
+.stat .stat-value { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 1.85rem; line-height: 1.1; }
+.stat .stat-label { color: var(--fb-muted); font-size: .85rem; }
+.stat.is-turmeric { border-left-color: var(--fb-turmeric); }
+.stat.is-sky { border-left-color: var(--fb-sky); }
+.stat.is-ink { border-left-color: var(--fb-ink); }
+
+/* ---------- Cards ---------- */
+.card { border: 1px solid var(--fb-line); border-radius: var(--fb-radius); background: var(--fb-surface); box-shadow: none !important; }
+.card-header { background: transparent !important; border-bottom: 1px solid var(--fb-line); padding: 1rem 1.25rem; }
+.card-header.fw-bold, .card-title-lg { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.1rem; letter-spacing: -0.01em; }
+.card-footer { background: transparent !important; border-top: 1px solid var(--fb-line); padding: .9rem 1.25rem; }
+.card > .table-responsive:last-child, .card > .list-group:last-child { border-radius: 0 0 var(--fb-radius) var(--fb-radius); overflow: hidden; }
+
+/* ---------- Tables ---------- */
+.table { --bs-table-bg: transparent; }
+.table thead th, .table > thead.table-light > tr > th {
+  background: #f6f9f7 !important; color: var(--fb-muted); font-size: .8rem; font-weight: 600;
+  border-bottom: 1px solid var(--fb-line); padding: .7rem 1rem; white-space: nowrap;
+}
+.table td { padding: .85rem 1rem; border-color: var(--fb-line); }
+.table tbody tr:hover > * { background: #fafcfb; }
+.table-sm td, .table-sm th { padding: .45rem .5rem !important; }
+.table tfoot td { border-top: 2px solid var(--fb-line); border-bottom: 0; }
+
+/* ---------- Forms ---------- */
+.form-label { font-weight: 600; font-size: .88rem; margin-bottom: .3rem; }
+.form-control, .form-select { border-color: #c9d6cf; border-radius: var(--fb-radius-sm); padding: .55rem .8rem; background-color: #fff; }
+.form-control:focus, .form-select:focus { border-color: var(--fb-leaf); box-shadow: 0 0 0 .22rem rgba(29, 122, 76, .18); }
+.form-control-sm { padding: .35rem .6rem; }
+.form-section-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.05rem; margin: 0; }
+.hint { color: var(--fb-muted); font-size: .82rem; font-weight: 400; }
+
+/* ---------- Badges: soft pills, with a dot for status ---------- */
+.badge { font-weight: 600; letter-spacing: 0; border-radius: 999px; padding: .35em .75em; }
+.badge.bg-success   { background: var(--fb-leaf-soft) !important; color: var(--fb-leaf-dark) !important; }
+.badge.bg-warning   { background: var(--fb-turmeric-soft) !important; color: #7a5200 !important; }
+.badge.bg-primary   { background: var(--fb-sky-soft) !important; color: #174e78 !important; }
+.badge.bg-secondary { background: #e8ecea !important; color: #3f524b !important; }
+.badge.bg-danger    { background: var(--fb-chilli-soft) !important; color: #8d261d !important; }
+.badge.status::before { content: ''; display: inline-block; width: .5em; height: .5em; border-radius: 50%; background: currentColor; margin-right: .45em; vertical-align: .05em; }
+
+/* Veg / non-veg mark: the green or red dot in a square used on Indian food packaging */
+.diet {
+  display: inline-block; flex: none; width: 15px; height: 15px; border: 2px solid; border-radius: 3px;
+  position: relative; vertical-align: -2px;
+}
+.diet::after { content: ''; position: absolute; inset: 2px; border-radius: 50%; background: currentColor; }
+.diet-veg { color: #1a8f3c; }
+.diet-nonveg { color: var(--fb-chilli); }
+.diet-label { font-size: .82rem; color: var(--fb-muted); margin-left: .3rem; }
+
+/* ---------- Food items ---------- */
+.items-list { list-style: none; padding: 0; margin: 0; font-size: .9rem; }
+.items-list li { display: flex; align-items: center; gap: .5rem; padding: .12rem 0; }
+.value-chip { background: var(--fb-turmeric-soft); color: #7a5200; font-weight: 700; padding: .3rem .7rem; border-radius: 999px; white-space: nowrap; font-size: .9rem; }
+.money { font-weight: 700; color: var(--fb-leaf-dark); white-space: nowrap; }
+
+.food-photo { width: 100%; object-fit: cover; border-radius: var(--fb-radius-sm); display: block; }
+.food-photo-empty {
+  width: 100%; border-radius: var(--fb-radius-sm); display: flex; align-items: center; justify-content: center;
+  background: repeating-linear-gradient(135deg, #eef3f0, #eef3f0 8px, #e6ede9 8px, #e6ede9 16px);
+  color: var(--fb-muted); font-size: .78rem; text-align: center;
+}
+
+.item-row { background: #f7faf8; border: 1px solid var(--fb-line); border-radius: var(--fb-radius-sm); padding: 1rem; margin-bottom: .85rem; }
+.item-row .row-title { font-weight: 700; }
+
+.total-bar {
+  display: flex; justify-content: flex-end; align-items: baseline; gap: .75rem;
+  padding: .85rem 0; margin-bottom: 1.25rem; border-top: 1px dashed #c3d1c9;
+}
+.total-bar strong { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.6rem; color: var(--fb-leaf-dark); }
+
+/* ---------- OTP token ---------- */
+.otp-token {
+  display: inline-block; background: var(--fb-turmeric-soft); border: 2px dashed var(--fb-turmeric);
+  color: var(--fb-ink); border-radius: 10px; padding: .15rem .8rem; margin-bottom: .45rem;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-weight: 700; font-size: 1.45rem; letter-spacing: .3em; padding-left: 1rem;
+}
+.otp-input { font-family: ui-monospace, Menlo, Consolas, monospace; letter-spacing: .15em; }
+
+/* ---------- Empty states ---------- */
+.empty { text-align: center; padding: 2.25rem 1rem !important; color: var(--fb-muted); }
+.empty strong { display: block; color: var(--fb-ink); font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.05rem; margin-bottom: .2rem; }
+
+/* ---------- Donation card (NGO) ---------- */
+.donation-card .card-body { padding: 1.1rem 1.25rem; }
+.donation-card .hotel-name { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 1.15rem; margin: 0; }
+.meta-line { font-size: .86rem; color: var(--fb-muted); display: flex; gap: .4rem; }
+.meta-line strong { color: var(--fb-ink); font-weight: 600; }
+.note-box { background: #f6f9f7; border-left: 3px solid var(--fb-line); padding: .5rem .75rem; border-radius: 0 var(--fb-radius-sm) var(--fb-radius-sm) 0; font-size: .86rem; color: var(--fb-muted); margin-top: .5rem; }
+
+/* ---------- Volunteer hero ---------- */
+.rank-hero { background: var(--fb-ink); color: #fff; border: 0; position: relative; overflow: hidden; }
+.rank-hero::after {
+  content: ''; position: absolute; right: -60px; top: -60px; width: 220px; height: 220px; border-radius: 50%;
+  border: 36px solid rgba(240, 165, 0, .16); pointer-events: none;
+}
+.rank-hero .card-body { padding: 1.5rem; position: relative; z-index: 1; }
+.rank-hero h2 { font-size: 1.5rem; margin: 0 0 .5rem; color: #fff; }
+.rank-hero .points { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 2.6rem; line-height: 1; color: var(--fb-turmeric); }
+.rank-hero .text-muted, .rank-hero small { color: rgba(255,255,255,.72) !important; }
+.rank-hero .progress { background: rgba(255,255,255,.14); height: 12px; border-radius: 999px; margin-top: 1.1rem; }
+.rank-hero .progress-bar { background: var(--fb-turmeric) !important; color: transparent; border-radius: 999px; }
+.rank-hero .rank-msg { display: block; margin-top: .45rem; }
+.rank-hero .badge { font-size: .88rem !important; }
+
+/* ---------- Route map ---------- */
+.map-frame { border-radius: var(--fb-radius-sm); overflow: hidden; border: 1px solid var(--fb-line); }
+.map-legend { display: flex; flex-wrap: wrap; gap: 1.1rem; font-size: .85rem; margin-top: .75rem; color: var(--fb-muted); }
+.map-legend .dot { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; align-items: center; justify-content: center; color: #fff; font-size: .72rem; font-weight: 700; margin-right: .35rem; }
+.route-line-sample { display: inline-block; width: 26px; border-top: 4px solid var(--fb-sky); vertical-align: middle; margin-right: .35rem; border-radius: 2px; }
+.route-info { font-size: .9rem; margin-top: .5rem; font-weight: 500; }
+
+/* ---------- Alerts ---------- */
+.alert { border: 0; border-left: 4px solid; border-radius: var(--fb-radius-sm); }
+.alert-success { background: var(--fb-leaf-soft); border-color: var(--fb-leaf); color: var(--fb-leaf-dark); }
+.alert-danger { background: var(--fb-chilli-soft); border-color: var(--fb-chilli); color: #8d261d; }
+.alert-info { background: var(--fb-sky-soft); border-color: var(--fb-sky); color: #174e78; }
+
+/* ---------- Auth pages ---------- */
+.auth-shell { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); }
+.auth-brand {
+  background: var(--fb-ink); color: #fff; padding: 3rem clamp(1.5rem, 4vw, 4rem);
+  display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden;
+}
+.auth-brand::before {
+  /* the "bridge": a big arch behind the content */
+  content: ''; position: absolute; left: -20%; right: -20%; bottom: -55%; height: 90%;
+  border: 44px solid rgba(240, 165, 0, .14); border-radius: 50%; pointer-events: none;
+}
+.auth-brand > * { position: relative; z-index: 1; }
+.auth-brand h1 { font-size: clamp(2rem, 3vw + 1rem, 3.1rem); line-height: 1.05; color: #fff; margin: 2.5rem 0 1rem; max-width: 14ch; }
+.auth-brand p.lead { color: rgba(255,255,255,.8); font-size: 1.05rem; max-width: 40ch; }
+.flow { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; gap: .9rem; counter-reset: step; }
+.flow li { display: flex; gap: .85rem; align-items: flex-start; counter-increment: step; color: rgba(255,255,255,.88); }
+.flow li::before {
+  content: counter(step); flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--fb-turmeric); color: var(--fb-ink);
+  font-weight: 800; display: inline-flex; align-items: center; justify-content: center; font-size: .85rem; margin-top: .05rem;
+}
+.flow strong { color: #fff; display: block; }
+.auth-foot { color: rgba(255,255,255,.55); font-size: .82rem; margin-top: 2rem; }
+.auth-form-side { display: flex; align-items: center; justify-content: center; padding: 2.5rem 1.25rem; }
+.auth-form-wrap { width: 100%; max-width: 440px; }
+.auth-form-wrap.wide { max-width: 560px; }
+.auth-form-wrap h2 { font-size: 1.7rem; margin-bottom: .25rem; }
+.auth-mobile-brand { display: none; }
+@media (max-width: 860px) {
+  .auth-shell { grid-template-columns: 1fr; }
+  .auth-brand { display: none; }
+  .auth-mobile-brand { display: flex; margin-bottom: 1.5rem; }
+  .auth-mobile-brand .fb-brand { color: var(--fb-ink); }
+  .auth-form-side { align-items: flex-start; }
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 575.98px) {
+  .fb-user-name { display: none; }
+  .table td, .table thead th { padding-left: .7rem; padding-right: .7rem; }
+}
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Volunteer dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar('Volunteer')}"></nav>
+<th:block th:replace="~{fragments :: leaflet}"></th:block>
+<div class="container pb-5">
+    <div th:replace="~{fragments :: alerts}"></div>
+
+    <!-- Rank / progress -->
+    <div class="card rank-hero mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between align-items-end gap-3">
+                <div>
+                    <h2>Hello, <span th:text="${volunteer.name}"></span></h2>
+                    <span class="badge" th:classappend="${stats.rank().badgeClass}" th:text="${stats.rank().label}"></span>
+                </div>
+                <div class="text-md-end">
+                    <div class="points"><span th:text="${stats.points()}">0</span> <span style="font-size:1.1rem;font-weight:600">pts</span></div>
+                    <small><span th:text="${stats.totalDeliveries()}">0</span> deliveries completed</small>
+                </div>
+            </div>
+            <div class="progress" role="progressbar" aria-label="Progress to the next rank"
+                 th:attr="aria-valuenow=${stats.progressPercent()}" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar" th:style="'width: ' + ${stats.progressPercent()} + '%'"></div>
+            </div>
+            <small class="rank-msg" th:if="${stats.nextRank() != null}">
+                <span th:text="${stats.pointsToNext()}"></span> points to <strong th:text="${stats.nextRank().label}"></strong>
+            </small>
+            <small class="rank-msg fw-bold" th:if="${stats.nextRank() == null}">You have reached the top tier. Thank you for being a Hunger Hero.</small>
+        </div>
+    </div>
+
+    <!-- Route map -->
+    <div class="card mb-4">
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <span class="fw-bold card-title-lg">Route <span id="routeTitle" class="fw-normal text-muted ms-1">-</span></span>
+            <a id="gmapsLink" class="btn btn-sm btn-outline-primary d-none" target="_blank" rel="noopener">Open in Google Maps</a>
+        </div>
+        <div class="card-body p-2">
+            <div id="routeMap" style="height: 380px;" class="map-frame"></div>
+            <div class="map-legend px-1">
+                <span><span class="dot" style="background:#1d7a4c">H</span>Hotel (pickup)</span>
+                <span><span class="dot" style="background:#c43a2f">N</span>NGO (drop-off)</span>
+                <span><span class="route-line-sample"></span>Route</span>
+            </div>
+            <div id="routeInfo" class="route-info px-1 text-muted"></div>
+        </div>
+    </div>
+
+    <!-- My active tasks -->
+    <div class="card mb-4">
+        <div class="card-header fw-bold">My active deliveries</div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                <tr><th>Food</th><th>Pick up from</th><th>Deliver to</th><th>Status</th><th style="min-width:230px">Next step</th><th></th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="d : ${myTasks}">
+                    <td>
+                        <ul th:replace="~{fragments :: itemsList(${d})}"></ul>
+                    </td>
+                    <td><span class="fw-semibold" th:text="${d.hotel.name}"></span><br><small class="text-muted" th:text="${d.pickupAddress}"></small></td>
+                    <td><span class="fw-semibold" th:text="${d.ngo.name}"></span><br><small class="text-muted" th:text="${d.ngo.address}"></small></td>
+                    <td><span class="badge status" th:classappend="${d.status.badgeClass}" th:text="${d.status}"></span></td>
+                    <td>
+                        <form th:if="${d.status.name() == 'CLAIMED'}" th:action="@{/volunteer/verify-pickup}" method="post" class="d-flex gap-2 m-0">
+                            <input type="hidden" name="donationId" th:value="${d.id}">
+                            <input type="text" name="otp" class="form-control form-control-sm otp-input" placeholder="Pickup OTP from hotel" aria-label="Pickup OTP from hotel"
+                                   inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required>
+                            <button class="btn btn-sm btn-primary" type="submit">Verify pickup</button>
+                        </form>
+                        <form th:if="${d.status.name() == 'IN_TRANSIT'}" th:action="@{/volunteer/verify-delivery}" method="post" class="d-flex gap-2 m-0">
+                            <input type="hidden" name="donationId" th:value="${d.id}">
+                            <input type="text" name="otp" class="form-control form-control-sm otp-input" placeholder="Delivery OTP from NGO" aria-label="Delivery OTP from NGO"
+                                   inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required>
+                            <button class="btn btn-sm btn-success text-nowrap" type="submit">Complete delivery</button>
+                        </form>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-primary js-show-route text-nowrap"
+                                th:with="r=${routes.get(d.id)}"
+                                th:attr="data-src-lat=${r.sourceLat()},data-src-lng=${r.sourceLng()},data-src-name=${r.sourceName()},data-src-address=${r.sourceAddress()},data-dst-lat=${r.destLat()},data-dst-lng=${r.destLng()},data-dst-name=${r.destName()},data-dst-address=${r.destAddress()}">
+                            Show route
+                        </button>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(myTasks)}"><td colspan="6" class="empty"><strong>No active deliveries</strong>Accept a task below to get started.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Available tasks -->
+    <div class="card mb-4">
+        <div class="card-header fw-bold">Available delivery tasks</div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                <tr><th>Food</th><th>Pick up from</th><th>Deliver to</th><th>Expires</th><th></th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="d : ${availableTasks}">
+                    <td>
+                        <ul th:replace="~{fragments :: itemsList(${d})}"></ul>
+                    </td>
+                    <td><span class="fw-semibold" th:text="${d.hotel.name}"></span><br><small class="text-muted" th:text="${d.pickupAddress}"></small></td>
+                    <td><span class="fw-semibold" th:text="${d.ngo.name}"></span><br><small class="text-muted" th:text="${d.ngo.address}"></small></td>
+                    <td class="text-nowrap" th:text="${#temporals.format(d.expiresAt, 'dd MMM, HH:mm')}"></td>
+                    <td class="text-nowrap">
+                        <button type="button" class="btn btn-sm btn-outline-primary js-show-route"
+                                th:with="r=${routes.get(d.id)}"
+                                th:attr="data-src-lat=${r.sourceLat()},data-src-lng=${r.sourceLng()},data-src-name=${r.sourceName()},data-src-address=${r.sourceAddress()},data-dst-lat=${r.destLat()},data-dst-lng=${r.destLng()},data-dst-name=${r.destName()},data-dst-address=${r.destAddress()}">
+                            Show route
+                        </button>
+                        <form th:action="@{/volunteer/accept/{id}(id=${d.id})}" method="post" class="d-inline m-0">
+                            <button class="btn btn-success btn-sm" type="submit">Accept task</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(availableTasks)}"><td colspan="5" class="empty"><strong>No open tasks right now</strong>Tasks appear once an NGO claims a donation.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Certificates -->
+    <div class="card">
+        <div class="card-header fw-bold">My Spreading Smiles certificates</div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex flex-wrap gap-2 justify-content-between align-items-center px-4 py-3" th:each="c : ${certificates}">
+                <div>
+                    <span class="fw-semibold" th:text="${c.title}"></span>
+                    <small class="text-muted ms-2" th:text="${#temporals.format(c.issuedDate, 'dd MMM yyyy')}"></small>
+                </div>
+                <a class="btn btn-outline-success btn-sm" th:href="@{/volunteer/certificate/download/{id}(id=${c.id})}">Download certificate</a>
+            </li>
+            <li class="list-group-item empty" th:if="${#lists.isEmpty(certificates)}">
+                <strong>No certificates yet</strong>Complete your first delivery to earn one.
+            </li>
+        </ul>
+    </div>
+</div>
+<script th:src="@{/js/route-map.js}"></script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Create account')}"></head>
+<body>
+<div class="auth-shell">
+    <aside class="auth-brand">
+        <a class="fb-brand" href="/">
+            <svg th:replace="~{fragments :: logo}"></svg>
+            <span class="fb-brand-name">FoodBridge</span>
+        </a>
+        <div>
+            <h1>Join the bridge.</h1>
+            <p class="lead">Pick the role that fits you. You can start in a few minutes.</p>
+            <ol class="flow">
+                <li><div><strong>Hotel or donor</strong>Post surplus food and generate the pickup OTP.</div></li>
+                <li><div><strong>NGO receiver</strong>Claim donations and confirm delivery with an OTP.</div></li>
+                <li><div><strong>Volunteer</strong>Pick up, deliver, earn points and certificates.</div></li>
+            </ol>
+        </div>
+        <div class="auth-foot">Hotels and NGOs mark their location on a map so volunteers get a route.</div>
+    </aside>
+
+    <main class="auth-form-side">
+        <div class="auth-form-wrap wide">
+            <div class="auth-mobile-brand">
+                <a class="fb-brand" href="/">
+                    <svg th:replace="~{fragments :: logo}"></svg>
+                    <span class="fb-brand-name">FoodBridge</span>
+                </a>
+            </div>
+            <h2>Create your account</h2>
+            <p class="text-muted mb-4">Tell us who you are and where you are based.</p>
+
+            <form th:action="@{/register}" th:object="${registerForm}" method="post" novalidate>
+                <div class="mb-3">
+                    <label class="form-label" for="role">I am a</label>
+                    <select class="form-select" th:field="*{role}" th:classappend="${#fields.hasErrors('role')} ? 'is-invalid'">
+                        <option value="">Choose a role</option>
+                        <option th:each="r : ${roles}" th:value="${r}"
+                                th:text="${r.name() == 'ROLE_HOTEL'} ? 'Hotel / Donor' : (${r.name() == 'ROLE_NGO'} ? 'NGO Receiver' : 'Volunteer')"></option>
+                    </select>
+                    <div class="invalid-feedback" th:errors="*{role}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="name">Name or organisation</label>
+                    <input type="text" class="form-control" th:field="*{name}" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:errors="*{name}"></div>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" class="form-control" th:field="*{email}" autocomplete="email" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{email}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" class="form-control" th:field="*{password}" autocomplete="new-password" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{password}"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="phone">Phone</label>
+                    <input type="tel" class="form-control" th:field="*{phone}" autocomplete="tel">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="address">Address</label>
+                    <textarea class="form-control" rows="2" th:field="*{address}" th:classappend="${#fields.hasErrors('address')} ? 'is-invalid'"></textarea>
+                    <div class="invalid-feedback" th:errors="*{address}"></div>
+                </div>
+                <div id="locationBox" class="mb-4 d-none">
+                    <label class="form-label">Location on map <span class="hint">Volunteers use it to get a route.</span></label>
+                    <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                        <button type="button" class="btn btn-outline-success btn-sm" id="findOnMap">Find my address on the map</button>
+                        <small id="locStatus" class="text-muted">Click the map or search to place the pin.</small>
+                    </div>
+                    <div id="locMap" style="height: 260px;" class="map-frame"></div>
+                    <input type="hidden" th:field="*{latitude}">
+                    <input type="hidden" th:field="*{longitude}">
+                </div>
+                <button type="submit" class="btn btn-success btn-lg w-100">Create account</button>
+            </form>
+            <p class="text-center mt-4 mb-4">Already have an account? <a th:href="@{/login}" class="fw-semibold">Log in</a></p>
+        </div>
+    </main>
+</div>
+<th:block th:replace="~{fragments :: leaflet}"></th:block>
+<script th:src="@{/js/location-picker.js}"></script>
+</body>
+</html>

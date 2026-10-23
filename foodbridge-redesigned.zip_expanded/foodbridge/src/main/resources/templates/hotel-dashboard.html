@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Hotel dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar('Hotel')}"></nav>
+<div class="container pb-5">
+    <div class="page-head">
+        <h1>Your donations</h1>
+        <p>Post surplus food, then share the pickup OTP with the volunteer who collects it.</p>
+    </div>
+
+    <div th:replace="~{fragments :: alerts}"></div>
+
+    <div class="stat-row">
+        <div class="stat is-ink">
+            <div class="stat-value" th:text="${#lists.size(donations)}">0</div>
+            <div class="stat-label">Donations posted</div>
+        </div>
+        <div class="stat is-turmeric">
+            <div class="stat-value" th:text="${donations.?[status.name() == 'AVAILABLE'].size()}">0</div>
+            <div class="stat-label">Waiting for an NGO</div>
+        </div>
+        <div class="stat is-sky">
+            <div class="stat-value" th:text="${donations.?[status.name() == 'CLAIMED' or status.name() == 'IN_TRANSIT'].size()}">0</div>
+            <div class="stat-label">In progress</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" th:text="${donations.?[status.name() == 'DELIVERED'].size()}">0</div>
+            <div class="stat-label">Delivered</div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header fw-bold">Post surplus food</div>
+        <div class="card-body p-4">
+            <form id="donationForm" th:action="@{/hotel/donate}" th:object="${donationForm}" method="post" enctype="multipart/form-data">
+
+                <div class="alert alert-danger" role="alert" th:if="${#fields.hasGlobalErrors()}">
+                    <div th:each="e : ${#fields.globalErrors()}" th:text="${e}"></div>
+                </div>
+
+                <!-- ===== food items ===== -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="form-section-title">Food items</h2>
+                    <button type="button" class="btn btn-sm btn-success" id="addItemBtn">+ Add food item</button>
+                </div>
+                <div class="text-danger small mb-2" th:if="${#fields.hasErrors('items')}" th:errors="*{items}"></div>
+
+                <datalist id="menuList">
+                    <option th:each="m : ${menuItems}" th:value="${m}"></option>
+                </datalist>
+
+                <div id="itemRows">
+                    <div class="item-row" th:each="item, st : *{items}">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="row-title">Item <span class="row-number" th:text="${st.count}">1</span></span>
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-row">Remove</button>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label class="form-label small">Menu item</label>
+                                <input list="menuList" class="form-control" data-field="itemName" maxlength="150" required
+                                       placeholder="Pick from the list or type"
+                                       th:field="*{items[__${st.index}__].itemName}"
+                                       th:classappend="${#fields.hasErrors('items[__${st.index}__].itemName')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:errors="*{items[__${st.index}__].itemName}"></div>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <label class="form-label small">Food type</label>
+                                <select class="form-select" data-field="foodType" required th:field="*{items[__${st.index}__].foodType}">
+                                    <option th:each="t : ${foodTypes}" th:value="${t}" th:text="${t.label}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <label class="form-label small">Quantity</label>
+                                <input type="number" min="0.1" step="any" class="form-control" data-field="quantity" required
+                                       th:field="*{items[__${st.index}__].quantity}"
+                                       th:classappend="${#fields.hasErrors('items[__${st.index}__].quantity')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:errors="*{items[__${st.index}__].quantity}"></div>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <label class="form-label small">Unit</label>
+                                <select class="form-select" data-field="unit" required th:field="*{items[__${st.index}__].unit}">
+                                    <option th:each="u : ${foodUnits}" th:value="${u}" th:text="${u.label}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <label class="form-label small">Approx. value (₹)</label>
+                                <input type="number" min="0" step="0.01" class="form-control" data-field="approximatePrice" required
+                                       th:field="*{items[__${st.index}__].approximatePrice}"
+                                       th:classappend="${#fields.hasErrors('items[__${st.index}__].approximatePrice')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:errors="*{items[__${st.index}__].approximatePrice}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- blueprint used by "+ Add food item" -->
+                <template id="itemRowTemplate">
+                    <div class="item-row">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="row-title">Item <span class="row-number">1</span></span>
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-row">Remove</button>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label class="form-label small">Menu item</label>
+                                <input list="menuList" class="form-control" data-field="itemName" maxlength="150" required placeholder="Pick from the list or type">
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <label class="form-label small">Food type</label>
+                                <select class="form-select" data-field="foodType" required>
+                                    <option value="VEG">Veg</option>
+                                    <option value="NON_VEG">Non-Veg</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <label class="form-label small">Quantity</label>
+                                <input type="number" min="0.1" step="any" class="form-control" data-field="quantity" required>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <label class="form-label small">Unit</label>
+                                <select class="form-select" data-field="unit" required>
+                                    <option value="KG">kg</option>
+                                    <option value="SERVING">serving</option>
+                                    <option value="LITER">liter</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <label class="form-label small">Approx. value (₹)</label>
+                                <input type="number" min="0" step="0.01" class="form-control" data-field="approximatePrice" required>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <div class="total-bar">
+                    <span class="text-muted">Total approximate value</span>
+                    <strong id="totalValue">₹ 0.00</strong>
+                </div>
+
+                <!-- ===== photo + timing + pickup ===== -->
+                <h2 class="form-section-title mb-3">Pickup details</h2>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="foodImage">Photo of the food <span class="hint">Optional. JPG, PNG, GIF or WebP, up to 5 MB.</span></label>
+                        <input type="file" class="form-control" id="foodImage" name="foodImage" accept="image/jpeg,image/png,image/gif,image/webp">
+                        <img id="imagePreview" class="d-none mt-2 rounded border" alt="Preview of the selected photo" style="max-height:160px; max-width:100%;">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Preparation time</label>
+                        <input type="datetime-local" class="form-control" th:field="*{preparationTime}" th:classappend="${#fields.hasErrors('preparationTime')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{preparationTime}"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Safe to eat for (hours)</label>
+                        <input type="number" min="1" max="72" class="form-control" th:field="*{expiryHours}" th:classappend="${#fields.hasErrors('expiryHours')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{expiryHours}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Pickup address</label>
+                        <textarea class="form-control" rows="2" th:field="*{pickupAddress}" th:classappend="${#fields.hasErrors('pickupAddress')} ? 'is-invalid'"></textarea>
+                        <div class="invalid-feedback" th:errors="*{pickupAddress}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Special instructions</label>
+                        <textarea class="form-control" rows="2" th:field="*{specialInstructions}"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success btn-lg mt-4">Post donation</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header fw-bold">My donations</div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                <tr><th style="width:90px">Photo</th><th>Food items</th><th>Approx. value</th><th>Expires</th><th>Status</th><th>NGO</th><th>Volunteer</th><th>Pickup OTP</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="d : ${donations}">
+                    <td><div th:replace="~{fragments :: foodPhoto(${d}, 64)}"></div></td>
+                    <td><ul th:replace="~{fragments :: itemsList(${d})}"></ul></td>
+                    <td class="money" th:text="'₹ ' + ${#numbers.formatDecimal(d.totalApproximateValue, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td class="text-nowrap" th:text="${#temporals.format(d.expiresAt, 'dd MMM, HH:mm')}"></td>
+                    <td><span class="badge status" th:classappend="${d.status.badgeClass}" th:text="${d.status}"></span></td>
+                    <td th:text="${d.ngo != null} ? ${d.ngo.name} : '-'"></td>
+                    <td th:text="${d.volunteer != null} ? ${d.volunteer.name} : '-'"></td>
+                    <td>
+                        <div th:if="${d.status.name() == 'CLAIMED'}">
+                            <div th:if="${d.pickupOtp != null}">
+                                <span class="otp-token" th:text="${d.pickupOtp}"></span>
+                            </div>
+                            <form th:action="@{/hotel/otp/{id}(id=${d.id})}" method="post" class="m-0">
+                                <button class="btn btn-sm btn-outline-success" type="submit"
+                                        th:text="${d.pickupOtp == null} ? 'Generate OTP' : 'Regenerate'"></button>
+                            </form>
+                            <small class="text-muted d-block mt-1" th:if="${d.volunteer == null}">No volunteer yet</small>
+                        </div>
+                        <span th:unless="${d.status.name() == 'CLAIMED'}" class="text-muted">-</span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(donations)}"><td colspan="8" class="empty"><strong>No donations yet</strong>Post your first surplus food above and NGOs will see it right away.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/food-form.js}"></script>
+</body>
+</html>

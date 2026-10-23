@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('NGO dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar('NGO')}"></nav>
+<div class="container pb-5">
+    <div class="page-head">
+        <h1>Available food</h1>
+        <p>Claim a donation, then share the delivery OTP with the volunteer who brings it to you.</p>
+    </div>
+
+    <div th:replace="~{fragments :: alerts}"></div>
+
+    <div class="stat-row">
+        <div class="stat is-turmeric">
+            <div class="stat-value" th:text="${#lists.size(available)}">0</div>
+            <div class="stat-label">Donations on offer</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" th:text="'₹ ' + ${#numbers.formatDecimal(availableValue, 1, 'COMMA', 0, 'POINT')}">₹ 0</div>
+            <div class="stat-label">Approx. value on offer</div>
+        </div>
+        <div class="stat is-sky">
+            <div class="stat-value" th:text="${myClaims.?[status.name() != 'DELIVERED'].size()}">0</div>
+            <div class="stat-label">Claimed, on the way</div>
+        </div>
+        <div class="stat is-ink">
+            <div class="stat-value" th:text="${myClaims.?[status.name() == 'DELIVERED'].size()}">0</div>
+            <div class="stat-label">Delivered to you</div>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-lg-2 g-3 mb-4">
+        <div class="col" th:each="d : ${available}">
+            <div class="card donation-card h-100">
+                <div class="p-2 pb-0"><div th:replace="~{fragments :: foodPhoto(${d}, 190)}"></div></div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                        <div>
+                            <h2 class="hotel-name" th:text="${d.hotel.name}">Hotel</h2>
+                            <div class="meta-line" th:text="${d.pickupAddress}"></div>
+                        </div>
+                        <span class="value-chip" th:text="'≈ ₹ ' + ${#numbers.formatDecimal(d.totalApproximateValue, 1, 'COMMA', 0, 'POINT')}">≈ ₹ 0</span>
+                    </div>
+                    <table th:replace="~{fragments :: itemsTable(${d})}"></table>
+                    <div class="meta-line"><strong>Safe until</strong> <span th:text="${#temporals.format(d.expiresAt, 'dd MMM, HH:mm')}"></span></div>
+                    <div class="note-box" th:if="${d.specialInstructions != null and !#strings.isEmpty(d.specialInstructions)}">
+                        <strong>Notes:</strong> <span th:text="${d.specialInstructions}"></span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <form th:action="@{/ngo/claim/{id}(id=${d.id})}" method="post" class="m-0">
+                        <button class="btn btn-success w-100" type="submit">Claim this donation</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-12" th:if="${#lists.isEmpty(available)}">
+            <div class="card"><div class="card-body empty"><strong>Nothing on offer right now</strong>New donations show up here as soon as a hotel posts them.</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header fw-bold">My claimed donations</div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                <tr><th style="width:90px">Photo</th><th>Food items</th><th>Approx. value</th><th>Hotel</th><th>Status</th><th>Volunteer</th><th>Delivery OTP</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="d : ${myClaims}">
+                    <td><div th:replace="~{fragments :: foodPhoto(${d}, 64)}"></div></td>
+                    <td><ul th:replace="~{fragments :: itemsList(${d})}"></ul></td>
+                    <td class="money" th:text="'₹ ' + ${#numbers.formatDecimal(d.totalApproximateValue, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td th:text="${d.hotel.name}"></td>
+                    <td><span class="badge status" th:classappend="${d.status.badgeClass}" th:text="${d.status}"></span></td>
+                    <td th:text="${d.volunteer != null} ? ${d.volunteer.name} : 'Awaiting volunteer'"></td>
+                    <td>
+                        <div th:if="${d.status.name() == 'CLAIMED' or d.status.name() == 'IN_TRANSIT'}">
+                            <div th:if="${d.deliveryOtp != null}">
+                                <span class="otp-token" th:text="${d.deliveryOtp}"></span>
+                            </div>
+                            <form th:action="@{/ngo/otp/{id}(id=${d.id})}" method="post" class="m-0">
+                                <button class="btn btn-sm btn-outline-success" type="submit"
+                                        th:text="${d.deliveryOtp == null} ? 'Generate OTP' : 'Regenerate'"></button>
+                            </form>
+                        </div>
+                        <span th:unless="${d.status.name() == 'CLAIMED' or d.status.name() == 'IN_TRANSIT'}" class="text-muted">-</span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(myClaims)}"><td colspan="7" class="empty"><strong>You have not claimed anything yet</strong>Claim a donation above to see it here.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Log in')}"></head>
+<body>
+<div class="auth-shell">
+    <aside class="auth-brand">
+        <a class="fb-brand" href="/">
+            <svg th:replace="~{fragments :: logo}"></svg>
+            <span class="fb-brand-name">FoodBridge</span>
+        </a>
+        <div>
+            <h1>Good food should reach a plate.</h1>
+            <p class="lead">FoodBridge connects hotels with surplus meals to NGOs and volunteers who get them to people who need them.</p>
+            <ol class="flow">
+                <li><div><strong>Hotels post surplus food</strong>Items, quantity, photo and pickup time.</div></li>
+                <li><div><strong>NGOs claim what they can serve</strong>The first claim reserves the donation.</div></li>
+                <li><div><strong>Volunteers collect and deliver</strong>OTP checks at pickup and drop-off keep it safe.</div></li>
+            </ol>
+        </div>
+        <div class="auth-foot">Every delivery earns the volunteer points and a certificate.</div>
+    </aside>
+
+    <main class="auth-form-side">
+        <div class="auth-form-wrap">
+            <div class="auth-mobile-brand">
+                <a class="fb-brand" href="/">
+                    <svg th:replace="~{fragments :: logo}"></svg>
+                    <span class="fb-brand-name">FoodBridge</span>
+                </a>
+            </div>
+            <h2>Welcome back</h2>
+            <p class="text-muted mb-4">Log in to manage your donations and deliveries.</p>
+
+            <div class="alert alert-danger" role="alert" th:if="${param.error}">The email or password is incorrect. Check both and try again.</div>
+            <div class="alert alert-info" role="status" th:if="${param.logout}">You have been logged out.</div>
+            <div class="alert alert-success" role="status" th:if="${success}" th:text="${success}"></div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <label class="form-label" for="username">Email</label>
+                    <input type="email" class="form-control form-control-lg" id="username" name="username" autocomplete="username" required autofocus>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" class="form-control form-control-lg" id="password" name="password" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="btn btn-success btn-lg w-100">Log in</button>
+            </form>
+            <p class="text-center mt-4 mb-0">New to FoodBridge? <a th:href="@{/register}" class="fw-semibold">Create an account</a></p>
+        </div>
+    </main>
+</div>
+</body>
+</html>
